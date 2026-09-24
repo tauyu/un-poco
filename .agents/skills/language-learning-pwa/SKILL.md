@@ -4,7 +4,7 @@ description: >-
   Blueprint, architectural patterns, and step-by-step procedures for building immersive,
   offline-first multilingual graded reading web applications (PWAs) like 'Un Poco'.
   Use when creating, architecting, or extending language learning apps for any target language
-  (French, German, Italian, Japanese, Russian, Spanish, etc.) with narrative route maps,
+  (French, German, Italian, Japanese, Russian, Spanish, etc.) with CEFR graded reading libraries,
   3-tier reading modes, morphological word lookup drawers, zero-backend local persistence,
   and native mobile PWA integration.
 ---
@@ -27,8 +27,8 @@ This skill encapsulates the full production architecture, educational interactio
    - Text-To-Speech (TTS): Browser `speechSynthesis` API with language tag (e.g. `es-ES`, `fr-FR`, `de-DE`, `ja-JP`) and variable speed controls (0.75x, 1.0x, 1.25x).
    - Shadowing & Pronunciation Evaluation: Browser `webkitSpeechRecognition` API comparing user voice input with sentence text via Levenshtein distance similarity scoring (0 tokens, zero API cost).
 
-3. **Narrative Cultural Journey**:
-   - Lessons are grouped into cultural/geographic routes (e.g., city walks, regional heritage, daily lifestyle) with thematic cover artwork and progress tracking.
+3. **CEFR Graded Reading & Thematic Rotation**:
+   - Lessons are organized by CEFR levels (A1 to C2) covering authentic cultural themes (e.g., cuisine, architecture, daily lifestyle, literature), featuring a rotating batch focus ("换一批") to prevent cognitive overload.
 
 4. **Context-First Morphological Lookup**:
    - In-app interactive text where every word is clickable.

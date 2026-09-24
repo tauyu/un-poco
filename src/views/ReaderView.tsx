@@ -27,7 +27,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [lessonSubTab, setLessonSubTab] = useState<'text' | 'grammar' | 'quiz'>('text');
   const [showTranslations, setShowTranslations] = useState<boolean>(true);
-  const [isPlayingArticle, setIsPlayingArticle] = useState<boolean>(false);
   const [activeSentenceId, setActiveSentenceId] = useState<string | null>(null);
 
   // Blind Reading Mode & per-sentence reveal state
@@ -210,7 +209,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
     setUserAnswers({});
     setQuizSubmitted(false);
     speechService.stop();
-    setIsPlayingArticle(false);
     setActiveSentenceId(null);
     setRevealedSentenceIds(new Set());
 
@@ -231,7 +229,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
     handleStopContinuousPlay();
     stopPlaying();
     speechService.stop();
-    setIsPlayingArticle(false);
     setActiveLesson(null);
     refreshProgress();
   };

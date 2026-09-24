@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   BookOpen, Bookmark, Volume2, Trash2, Download, Upload, ShieldCheck,
   ShieldAlert, Copy, Check, Quote, Share2, X, Search, RotateCcw,
-  ArrowRight, ChevronRight, Clock, Award
+  ArrowRight, Clock, Award
 } from 'lucide-react';
 import { storageService, type SavedSentence, type SavedWord } from '../services/storage/storageService';
 import { speechService } from '../services/speech/speechService';
-import { ALL_COURSES_POOL, type Lesson } from '../data/courses/courseData';
+import { ALL_COURSES_POOL } from '../data/courses/courseData';
 
 interface ProfileViewProps {
   speechRate: number;
@@ -119,14 +119,14 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ speechRate, onNavigate
   }, [vocabList, vocabFilter, vocabSearch]);
 
   const handleToggleWordMastered = (id: string, currentlyMastered: boolean) => {
-    storageService.toggleWordMastered(id);
+    storageService.toggleWordMastery(id);
     loadData();
     showToast(currentlyMastered ? '已将该生词重新拎入“学习中”队列' : '已将该词标记为“已掌握”！');
   };
 
   const handleDeleteWord = (id: string) => {
     if (confirm('确定要从生词本中删除这个单词吗？')) {
-      storageService.deleteWord(id);
+      storageService.removeWord(id);
       loadData();
       showToast('已从生词库中移除');
     }

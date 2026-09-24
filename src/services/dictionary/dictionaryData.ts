@@ -1,6 +1,7 @@
 import type { DictEntry } from './types';
 import { EXPANDED_SPANISH_WORDS } from './expandedDictionary';
 import { LESSON_VOCABULARY } from './lessonVocabulary';
+import { COMPREHENSIVE_SPANISH_WORDS } from './comprehensiveDictionary';
 import { removeAccents } from './conjugations';
 
 export const CORE_SPANISH_DICTIONARY: DictEntry[] = [
@@ -1249,7 +1250,8 @@ export const CORE_SPANISH_DICTIONARY: DictEntry[] = [
     examples: [{ es: 'Cuesta menos de diez euros.', zh: '不到十欧元。', en: 'It costs less than ten euros.' }]
   },
   ...EXPANDED_SPANISH_WORDS,
-  ...LESSON_VOCABULARY
+  ...LESSON_VOCABULARY,
+  ...COMPREHENSIVE_SPANISH_WORDS
 ];
 
 // Fast lowercase lookup index

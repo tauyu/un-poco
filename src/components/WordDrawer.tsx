@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Volume2, Bookmark, BookmarkCheck, X, Sparkles, ArrowRight, Gauge } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Volume2, Bookmark, BookmarkCheck, X, Sparkles, ArrowRight, Gauge, Check, ExternalLink } from 'lucide-react';
 import { lookupWord } from '../services/dictionary/lookupService';
 import type { LookupResult } from '../services/dictionary/types';
 import { speechService } from '../services/speech/speechService';
@@ -22,6 +22,9 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
   const [isSaved, setIsSaved] = useState(false);
   const [speechRate, setSpeechRate] = useState<number>(1.0);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [showIosHint, setShowIosHint] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const wordTextRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (word) {
@@ -29,6 +32,8 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
       setLookupResult(res);
       const lemma = res.entry?.word || res.matchedWord || word;
       setIsSaved(storageService.isWordSaved(lemma));
+      setShowIosHint(false);
+      setCopied(false);
     } else {
       setLookupResult(null);
     }
@@ -38,6 +43,26 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
 
   const entry = lookupResult.entry;
   const lemma = entry?.word || lookupResult.matchedWord || word;
+
+  const handleTriggerIosTranslate = () => {
+    try {
+      navigator.clipboard.writeText(lemma);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // ignore
+    }
+
+    if (wordTextRef.current) {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(wordTextRef.current);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+
+    setShowIosHint(true);
+  };
 
   const handlePlayAudio = (rate: number = speechRate) => {
     setIsPlayingAudio(true);
@@ -98,7 +123,10 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
         <div className="flex items-start justify-between border-b border-sand-100 pb-4">
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold tracking-tight text-sand-900 font-serif">
+              <h2
+                ref={wordTextRef}
+                className="text-2xl font-bold tracking-tight text-sand-900 font-serif select-all"
+              >
                 {lemma}
               </h2>
               {word.toLowerCase() !== lemma.toLowerCase() && (
@@ -207,28 +235,89 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
           </div>
         )}
 
-        {/* Definitions */}
-        <div className="mt-5 space-y-3">
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-sand-600">
-              中文释义
-            </h4>
-            <p className="mt-1 text-base font-medium text-sand-900 leading-snug">
-              {entry?.meaningZh || '暂无详细中文释义'}
-            </p>
-          </div>
-
-          {entry?.meaningEn && (
+        {/* Definitions or iOS Translate Fallback */}
+        {entry?.meaningZh ? (
+          <div className="mt-5 space-y-3">
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider text-sand-600">
-                English Meaning
+                中文释义
               </h4>
-              <p className="mt-0.5 text-sm text-sand-700">
-                {entry.meaningEn}
+              <p className="mt-1 text-base font-medium text-sand-900 leading-snug">
+                {entry.meaningZh}
               </p>
             </div>
-          )}
-        </div>
+
+            {entry?.meaningEn && (
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-sand-600">
+                  English Meaning
+                </h4>
+                <p className="mt-0.5 text-sm text-sand-700">
+                  {entry.meaningEn}
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="mt-5 rounded-2xl border border-batllo-200 bg-batllo-50/70 p-4 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-batllo-600 to-andalucia-500 text-white shadow-sm">
+                <Sparkles className="h-4 w-4" />
+              </span>
+              <div>
+                <h4 className="text-sm font-bold text-batllo-900">
+                  调用 iOS 系统原生翻译
+                </h4>
+                <p className="text-[11px] text-batllo-700">
+                  该词暂未收录在离线精读库，可一键调取苹果官方词典与翻译
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-3.5 space-y-2">
+              <button
+                onClick={handleTriggerIosTranslate}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-batllo-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-batllo-700 active:scale-[0.98] transition-all"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4 text-emerald-300" />
+                    <span>已高亮并复制！点击上方系统气泡【翻译】</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 text-andalucia-300" />
+                    <span>呼出 iOS 翻译 / 查询浮层</span>
+                  </>
+                )}
+              </button>
+
+              {showIosHint && (
+                <div className="rounded-xl border border-batllo-200 bg-white/95 p-3 text-[11px] text-batllo-800 shadow-xs">
+                  💡 <strong>操作提示</strong>：上方单词已全选高亮！在弹出的系统黑色气泡菜单中轻触 <strong>【翻译】</strong> 或 <strong>【查询】</strong>，即可从屏幕底部直接滑出 Apple 原生卡片。
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 pt-1">
+                <a
+                  href={`eudic://dict/${encodeURIComponent(lemma)}`}
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-sand-200 bg-white py-2 text-[11px] font-medium text-sand-700 hover:bg-sand-50 transition-colors shadow-2xs"
+                >
+                  <span>在《西语助手》查看</span>
+                </a>
+                <a
+                  href={`https://es.wiktionary.org/wiki/${encodeURIComponent(lemma.toLowerCase())}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-sand-200 bg-white py-2 text-[11px] font-medium text-sand-700 hover:bg-sand-50 transition-colors shadow-2xs"
+                >
+                  <ExternalLink className="h-3 w-3 text-sand-500" />
+                  <span>维基词典详细版</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Examples */}
         {entry?.examples && entry.examples.length > 0 && (
@@ -291,6 +380,26 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
             )}
           </button>
         </div>
+
+        {/* Secondary System / App Lookup Bridge */}
+        {entry?.meaningZh && (
+          <div className="mt-3.5 flex items-center justify-center gap-3 text-[11px] text-sand-500">
+            <button
+              onClick={handleTriggerIosTranslate}
+              className="flex items-center gap-1 font-medium text-batllo-700 hover:text-batllo-900 transition-colors"
+            >
+              <Sparkles className="h-3 w-3 text-andalucia-500" />
+              <span>在 iOS 系统中【翻译】/【查询】</span>
+            </button>
+            <span>·</span>
+            <a
+              href={`eudic://dict/${encodeURIComponent(lemma)}`}
+              className="hover:text-sand-700 transition-colors"
+            >
+              西语助手
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

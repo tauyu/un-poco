@@ -8,10 +8,21 @@
   "theme_color": "#0d9488",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%230d9488'/><path d='M120 340 C180 260, 240 400, 320 280 C360 220, 400 300, 440 240' stroke='%23fef3c7' stroke-width='40' fill='none' stroke-linecap='round'/><circle cx='380' cy='160' r='50' fill='%23f59e0b'/></svg>",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }

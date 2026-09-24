@@ -1,10 +1,12 @@
-const CACHE_NAME = 'un-poco-v1';
+const CACHE_NAME = 'un-poco-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/favicon.svg',
-  '/icons.svg'
+  '/apple-touch-icon.png',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/favicon-32x32.png'
 ];
 
 self.addEventListener('install', (event) => {

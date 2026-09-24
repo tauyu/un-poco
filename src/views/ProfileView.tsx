@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   BookOpen, Bookmark, Volume2, Trash2, Download, Upload, ShieldCheck,
   ShieldAlert, Copy, Check, Quote, Share2, X, Search, RotateCcw,
-  ArrowRight, Clock, Award
+  ArrowRight, Clock, Award, Edit3
 } from 'lucide-react';
 import { storageService, type SavedSentence, type SavedWord } from '../services/storage/storageService';
 import { speechService } from '../services/speech/speechService';
@@ -24,6 +24,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ speechRate, onNavigate
   const [showVocabDrawer, setShowVocabDrawer] = useState<boolean>(false);
   const [vocabFilter, setVocabFilter] = useState<'all' | 'mastered' | 'learning'>('all');
   const [vocabSearch, setVocabSearch] = useState<string>('');
+  const [editingWordId, setEditingWordId] = useState<string | null>(null);
+  const [editingWordMeaning, setEditingWordMeaning] = useState<string>('');
 
   const [showLessonsDrawer, setShowLessonsDrawer] = useState<boolean>(false);
   const [courseProgress, setCourseProgress] = useState(storageService.getCourseProgress());
@@ -492,17 +494,87 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ speechRate, onNavigate
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-sand-800 font-medium">
-                          {w.meaningZh}
-                        </p>
-                        {w.meaningEn && (
-                          <p className="text-[11px] text-sand-600 font-sans">
-                            {w.meaningEn}
-                          </p>
+                        {/* Custom Meaning / Definition with Inline Edit */}
+                        {editingWordId === w.id ? (
+                          <div className="flex items-center gap-1.5 pt-1">
+                            <input
+                              type="text"
+                              value={editingWordMeaning}
+                              onChange={(e) => setEditingWordMeaning(e.target.value)}
+                              placeholder="输入中文释义..."
+                              className="rounded-lg border border-batllo-400 bg-white px-2 py-1 text-xs text-sand-900 focus:outline-none focus:ring-1 focus:ring-batllo-500 w-44"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  if (editingWordMeaning.trim()) {
+                                    storageService.updateWordMeaning(w.id, editingWordMeaning.trim());
+                                    loadData();
+                                  }
+                                  setEditingWordId(null);
+                                } else if (e.key === 'Escape') {
+                                  setEditingWordId(null);
+                                }
+                              }}
+                            />
+                            <button
+                              onClick={() => {
+                                if (editingWordMeaning.trim()) {
+                                  storageService.updateWordMeaning(w.id, editingWordMeaning.trim());
+                                  loadData();
+                                }
+                                setEditingWordId(null);
+                              }}
+                              className="rounded-md bg-batllo-600 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-batllo-700"
+                            >
+                              保存
+                            </button>
+                            <button
+                              onClick={() => setEditingWordId(null)}
+                              className="rounded-md px-1.5 py-1 text-[11px] text-sand-500 hover:bg-sand-100"
+                            >
+                              取消
+                            </button>
+                          </div>
+                        ) : !w.meaningZh || w.meaningZh === '本地词库未收录' || w.meaningZh === '暂无释义' ? (
+                          <div className="flex items-center gap-2 pt-0.5">
+                            <span className="text-[11px] text-sand-400 italic">未录入释义</span>
+                            <button
+                              onClick={() => {
+                                setEditingWordId(w.id);
+                                setEditingWordMeaning('');
+                              }}
+                              className="flex items-center gap-1 rounded bg-batllo-50 px-2 py-0.5 text-[10px] font-semibold text-batllo-700 hover:bg-batllo-100 transition-colors"
+                            >
+                              <Edit3 className="h-3 w-3" />
+                              <span>添加自定义释义</span>
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="group/meaning flex items-center gap-1.5">
+                            <p className="text-xs text-sand-800 font-medium">
+                              {w.meaningZh}
+                            </p>
+                            {w.customMeaningZh && (
+                              <span className="rounded bg-amber-50 px-1.5 py-0.2 text-[9px] font-bold text-amber-700 border border-amber-200/60">
+                                自填
+                              </span>
+                            )}
+                            <button
+                              onClick={() => {
+                                setEditingWordId(w.id);
+                                setEditingWordMeaning(w.meaningZh);
+                              }}
+                              className="opacity-70 group-hover/meaning:opacity-100 p-0.5 text-sand-400 hover:text-batllo-600 transition-opacity"
+                              title="修改自定义释义"
+                            >
+                              <Edit3 className="h-3 w-3" />
+                            </button>
+                          </div>
                         )}
-                        {w.contextSentence && (
-                          <p className="text-[11px] text-sand-600 italic bg-sand-50 rounded-lg p-1.5 border border-sand-100">
-                            "{w.contextSentence}"
+
+                        {w.meaningEn && (
+                          <p className="text-[11px] text-sand-500 font-sans">
+                            {w.meaningEn}
                           </p>
                         )}
                       </div>

@@ -7,6 +7,7 @@ export interface SavedWord {
   partOfSpeech: string;
   conjugationNotes?: string;
   contextSentence?: string;
+  customMeaningZh?: string;
   dateAdded: number;
   mastered: boolean;
 }
@@ -132,6 +133,25 @@ class StorageService {
   public isWordSaved(wordLemma: string): boolean {
     const items = this.getVocabulary();
     return items.some((item) => item.word.toLowerCase() === wordLemma.toLowerCase());
+  }
+
+  public getSavedWord(wordLemma: string): SavedWord | undefined {
+    const items = this.getVocabulary();
+    return items.find((item) => item.word.toLowerCase() === wordLemma.toLowerCase());
+  }
+
+  public updateWordMeaning(idOrWord: string, newMeaningZh: string): SavedWord | undefined {
+    const items = this.getVocabulary();
+    const item = items.find(
+      (i) => i.id === idOrWord || i.word.toLowerCase() === idOrWord.toLowerCase()
+    );
+    if (item) {
+      item.meaningZh = newMeaningZh.trim();
+      item.customMeaningZh = newMeaningZh.trim();
+      localStorage.setItem(STORAGE_KEYS.VOCABULARY, JSON.stringify(items));
+      return item;
+    }
+    return undefined;
   }
 
   // === SAVED SENTENCES (句子摘抄) ===

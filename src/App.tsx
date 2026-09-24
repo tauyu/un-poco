@@ -83,7 +83,8 @@ export function App() {
       {/* Word Definition Drawer (Bottom sheet) */}
       <WordDrawer
         word={selectedWord}
-        contextSentence={contextSentence}
+        contextSentence={activeTab === 'profile' ? undefined : contextSentence}
+        showContextSentence={activeTab !== 'profile'}
         onClose={() => setSelectedWord(null)}
         onSavedChange={refreshVocabCount}
       />

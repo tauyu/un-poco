@@ -1,0 +1,17 @@
+{
+  "name": "Un Poco · 西语智能学习",
+  "short_name": "Un Poco",
+  "description": "基于巴特罗之家与安达卢西亚灵感的零Token纯本地西语学习应用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#0d9488",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%230d9488'/><path d='M120 340 C180 260, 240 400, 320 280 C360 220, 400 300, 440 240' stroke='%23fef3c7' stroke-width='40' fill='none' stroke-linecap='round'/><circle cx='380' cy='160' r='50' fill='%23f59e0b'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

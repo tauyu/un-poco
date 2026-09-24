@@ -394,67 +394,27 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
           )}
         </div>
 
-        {/* 5. External Dictionaries & iOS Translate Bridge */}
-        <div className="mt-4 rounded-2xl border border-sand-200 bg-sand-50/60 p-3.5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-sand-800 flex items-center gap-1.5">
-              <Globe className="h-3.5 w-3.5 text-batllo-600" />
-              在线翻译与权威词典拓展
-            </span>
-            <button
-              onClick={handleCopyWord}
-              className="flex items-center gap-1 text-[11px] text-batllo-700 hover:text-batllo-900"
-              title="复制单词"
-            >
-              {copied ? (
-                <>
-                  <Check className="h-3 w-3 text-emerald-600" />
-                  <span className="text-emerald-600 font-semibold">已复制</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-3 w-3" />
-                  <span>复制词汇</span>
-                </>
-              )}
-            </button>
+        {/* 5. Context Sentence where word was clicked (当前课文语境) */}
+        {showContextSentence && contextSentence && (
+          <div className="mt-4 border-t border-sand-100 pt-3.5">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-sand-500">
+              当前上下文
+            </h4>
+            <p className="mt-1.5 rounded-xl border-l-2 border-batllo-500 bg-sand-50 px-3 py-2 text-xs italic text-sand-700 leading-relaxed">
+              "{contextSentence}"
+            </p>
           </div>
+        )}
 
-          <div className="mt-2.5 grid grid-cols-2 gap-2">
-            <a
-              href={`https://www.deepl.com/translator#es/zh/${encodeURIComponent(lemma)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-sand-200 bg-white py-2 px-2.5 text-xs font-semibold text-sand-800 hover:border-batllo-400 hover:bg-batllo-50/40 transition-all shadow-2xs"
-            >
-              <ExternalLink className="h-3.5 w-3.5 text-batllo-600 shrink-0" />
-              <span>DeepL 精准翻译</span>
-            </a>
-            <a
-              href={`https://www.spanishdict.com/translate/${encodeURIComponent(lemma)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-sand-200 bg-white py-2 px-2.5 text-xs font-semibold text-sand-800 hover:border-batllo-400 hover:bg-batllo-50/40 transition-all shadow-2xs"
-            >
-              <ExternalLink className="h-3.5 w-3.5 text-andalucia-600 shrink-0" />
-              <span>SpanishDict 词典</span>
-            </a>
-          </div>
-
-          <p className="mt-2 text-[11px] text-sand-500 leading-relaxed">
-            💡 <strong>Apple 原生翻译操作</strong>：在 iPhone 上手指<strong>长按上方大标题单词</strong>，在系统黑底气泡菜单中点击 <strong>【翻译】</strong>，即可从屏幕底部滑出 Apple 原生卡片。
-          </p>
-        </div>
-
-        {/* Examples */}
+        {/* 6. Typical Examples (典型例句) */}
         {entry?.examples && entry.examples.length > 0 && (
-          <div className="mt-5 border-t border-sand-100 pt-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-sand-600">
+          <div className="mt-4 border-t border-sand-100 pt-3.5">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-sand-500">
               典型例句 (Ejemplos)
             </h4>
-            <div className="mt-2.5 space-y-2.5">
+            <div className="mt-2.5 space-y-2">
               {entry.examples.map((ex: { es: string; zh: string; en?: string }, idx: number) => (
-                <div key={idx} className="rounded-lg bg-sand-50 p-2.5 text-sm">
+                <div key={idx} className="rounded-xl bg-sand-50 p-2.5 text-sm">
                   <div className="flex items-start justify-between gap-2">
                     <p className="font-medium text-sand-900">{ex.es}</p>
                     <button
@@ -472,20 +432,8 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
           </div>
         )}
 
-        {/* Context Sentence where word was clicked */}
-        {showContextSentence && contextSentence && (
-          <div className="mt-5 border-t border-sand-100 pt-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-sand-600">
-              当前上下文
-            </h4>
-            <p className="mt-1.5 rounded-lg border-l-2 border-batllo-500 bg-sand-50 px-3 py-2 text-xs italic text-sand-700">
-              "{contextSentence}"
-            </p>
-          </div>
-        )}
-
-        {/* Action Button: Save to Vocabulary */}
-        <div className="mt-6">
+        {/* 7. Action Button: Save to Vocabulary (生词本收藏) */}
+        <div className="mt-5">
           <button
             onClick={handleToggleSave}
             className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold shadow-sm transition-all active:scale-[0.98] ${
@@ -503,6 +451,51 @@ export const WordDrawer: React.FC<WordDrawerProps> = ({
               <>
                 <Bookmark className="h-4 w-4" />
                 收藏到我的生词本
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* 8. Secondary External Reference Links (底部辅助拓展) */}
+        <div className="mt-4 flex items-center justify-between border-t border-sand-100 pt-3 text-xs text-sand-500">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Globe className="h-3.5 w-3.5 text-batllo-600 shrink-0" />
+            <span className="text-sand-600">更多词典拓展:</span>
+            <a
+              href={`https://www.spanishdict.com/translate/${encodeURIComponent(lemma)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-batllo-700 hover:text-batllo-900 hover:underline inline-flex items-center gap-0.5"
+            >
+              <span>SpanishDict</span>
+              <ExternalLink className="h-2.5 w-2.5" />
+            </a>
+            <span>·</span>
+            <a
+              href={`https://www.deepl.com/translator#es/zh/${encodeURIComponent(lemma)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-batllo-700 hover:text-batllo-900 hover:underline inline-flex items-center gap-0.5"
+            >
+              <span>DeepL</span>
+              <ExternalLink className="h-2.5 w-2.5" />
+            </a>
+          </div>
+
+          <button
+            onClick={handleCopyWord}
+            className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-sand-500 hover:bg-sand-100 hover:text-batllo-700 transition-colors shrink-0"
+            title="复制单词"
+          >
+            {copied ? (
+              <>
+                <Check className="h-3 w-3 text-emerald-600" />
+                <span className="text-[11px] font-semibold text-emerald-600">已复制</span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-3 w-3" />
+                <span className="text-[11px]">复制</span>
               </>
             )}
           </button>

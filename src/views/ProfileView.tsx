@@ -386,6 +386,16 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ speechRate, onNavigate
             <span>从文件恢复数据</span>
           </button>
         </div>
+
+        {/* App Version Footer */}
+        <div className="mt-8 mb-4 text-center">
+          <p className="text-xs font-serif font-bold text-sand-600">
+            Un Poco · 西语精读与故事漫游
+          </p>
+          <p className="text-[11px] text-sand-400 mt-0.5">
+            Versión 1.0.0 · Hecho con Pasión
+          </p>
+        </div>
       </div>
 
       {/* 1. Vocab Words Detailed Drill-down Drawer / Modal */}
